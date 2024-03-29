@@ -1,0 +1,8 @@
+
+1) Create table code in all places
+
+Color Codes 
+
+f39c12 - Orange
+
+3498db - Blue
