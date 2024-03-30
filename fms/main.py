@@ -2236,14 +2236,19 @@ class Fms:
         fms.sidebar.pack(side=LEFT, fill=Y) 
         
         # Add buttons to the sidebar
+        # fms.button_width = 20  # Adjust the width as needed
 
         fms.profile = Button(fms.sidebar,text="VIEW PROFILE", command=lambda:fms.Userdetails(user_id), bg="#f39c12",cursor="hand2",
                       fg="white",font=("cooper black",14))
-        fms.profile.grid(row=3, column=0, ipadx=25, padx=25, pady=25)
+        fms.profile.grid(row=3, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
 
-        fms.viewdonations= Button(fms.sidebar,text="VIEW DONATIONS", command=lambda:fms.Userdonations(user_id), bg="#0b1335",cursor="hand2",
+        fms.viewdonations= Button(fms.sidebar,text="PENDING DONATIONS", command=lambda:fms.Userdonations(user_id), bg="#0b1335",cursor="hand2",
                       fg="white",font=("cooper black",14))
-        fms.viewdonations.grid(row=4, column=0, ipadx=8, padx=25, pady=25)
+        fms.viewdonations.grid(row=4, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+
+        fms.viewaccepteddonations= Button(fms.sidebar,text="ACCEPTED DONATIONS", command=lambda:fms.User_accepted_donations(user_id), bg="#0b1335",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.viewaccepteddonations.grid(row=8, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
 
         def show_custom_messages(message):
             # Create a new top-level window
@@ -2549,11 +2554,15 @@ class Fms:
 
         fms.profile = Button(fms.sidebar,text="VIEW PROFILE", command=lambda:fms.Userdetails(user_id), bg="#0b1335",cursor="hand2",
                       fg="white",font=("cooper black",14))
-        fms.profile.grid(row=3, column=0, ipadx=25, padx=25, pady=25)
+        fms.profile.grid(row=3, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
 
-        fms.viewdonations= Button(fms.sidebar,text="VIEW DONATIONS", command=lambda:fms.Userdonations(user_id), bg="#f39c12",cursor="hand2",
+        fms.viewdonations= Button(fms.sidebar,text="PENDING DONATIONS", command=lambda:fms.Userdonations(user_id), bg="#f39c12",cursor="hand2",
                       fg="white",font=("cooper black",14))
-        fms.viewdonations.grid(row=4, column=0, ipadx=8, padx=25, pady=25)
+        fms.viewdonations.grid(row=4, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+
+        fms.viewaccepteddonations= Button(fms.sidebar,text="ACCEPTED DONATIONS", command=lambda:fms.User_accepted_donations(user_id), bg="#0b1335",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.viewaccepteddonations.grid(row=8, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
 
         def show_custom_messages(message):
             # Create a new top-level window
@@ -2621,26 +2630,33 @@ class Fms:
             conn = connect('fms.db')
             cursor = conn.cursor()
 
-            # Fetch and display data
-            cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status FROM donation_details")
-            donations = cursor.fetchall()
-            for donation in donations:
-                # Fetch the manager's user_name from the managers table
-                cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
-                manager_name = cursor.fetchone()[0]  # Assuming manager_id is at index 7
+            try:
+                # Fetch and display pending donations
+                cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status FROM donation_details WHERE donation_status = 'pending'")
+                pending_donations = cursor.fetchall()
 
-                # Set the status color based on the donation status
-                status_color = 'green' if donation[7] == 'accepted' else 'red'
+                for donation in pending_donations:
+                    # Fetch the manager's user_name from the managers table
+                    cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
+                    manager_name = cursor.fetchone()[0]  # Assuming manager_id is at index 7
 
-                # Insert a checkbox in the first column for selecting the donation
-                tree.insert("", END, values=(donation[0], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8]), tags=("my_font", status_color))
+                    # Set the status color based on the donation status
+                    status_color = 'red'  # Assuming pending donations are marked in red
 
-            # Apply the "my_font" tag to all items in the treeview
-            for donation in tree.get_children():
-                tree.item(donation, tags=("my_font", status_color))
+                    # Insert a checkbox in the first column for selecting the donation
+                    tree.insert("", END, values=(donation[0], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8]), tags=("my_font", status_color))
 
-            # Close the connection
-            conn.close()
+                # Apply the "my_font" tag to all items in the treeview
+                for donation in tree.get_children():
+                    tree.item(donation, tags=("my_font", status_color))
+
+            except Exception as e:
+                # Show error message if retrieval fails
+                show_custom_error(f"Failed to load donations: {str(e)}")
+
+            finally:
+                # Close the connection
+                conn.close()
 
         # code to accept the donation
         def accept_donation(user_id):
@@ -2716,7 +2732,7 @@ class Fms:
         content_frame.pack(side=LEFT, fill=BOTH, expand=True)
 
         # Create a label for the title
-        title_label = Label(content_frame, text="VIEW DONATIONS", font=("Cooper Black", 16), bg="#0b1335", fg="white", pady=10)
+        title_label = Label(content_frame, text="VIEW PENDING DONATIONS", font=("Cooper Black", 16), bg="#0b1335", fg="white", pady=10)
         title_label.pack(fill=X)
         title_label.pack(pady=(0, 85))
 
@@ -2760,17 +2776,17 @@ class Fms:
         conn = connect('fms.db')
         cursor = conn.cursor()
 
-        # Fetch and display data
-        cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details")
-        donations = cursor.fetchall()
+        # Fetch and display pending donations
+        cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE donation_status = 'pending'")
+        pending_donations = cursor.fetchall()
 
-        for donation in donations:
+        for donation in pending_donations:
             # Fetch the manager's user_name from the managers table
             cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
             manager_name = cursor.fetchone()[0]
 
             # Set the status color based on the donation status
-            status_color = 'green' if donation[8] == 'accepted' else 'red'
+            status_color = 'red'  # Assuming pending donations are marked in red
 
             # Insert the data into the Treeview with the status color
             tree.insert("", END, values=(donation[0], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8]), tags=("my_font", status_color))
@@ -2782,6 +2798,132 @@ class Fms:
         # Button to accept the selected donation
         accept_button = Button(content_frame, text="ACCEPT DONATION", command=lambda: accept_donation(user_id), bg="#2ecc71", fg="white", font=("Cooper Black", 12))
         accept_button.pack(side=LEFT, padx=500, pady=10)
+
+        conn.close()
+        fms.scr.mainloop()
+
+#--- User Accepted Donations Page -----
+        
+    def User_accepted_donations(fms, user_id):
+        fms.scr.destroy()
+        fms.scr = Tk()
+        
+        # getting screen width and height of display
+        width= fms.scr.winfo_screenwidth() 
+        height= fms.scr.winfo_screenheight()
+        
+        #setting tkinter window size
+        fms.scr.geometry("%dx%d" % (width, height))
+        
+        fms.scr.title("FOOD MANAGEMENT SYSTEM")
+        
+        fms.managerdashf1= Frame(fms.scr, bg="#ffffff")
+
+        fms.logo = PhotoImage(file="logo.png")
+        fms.logo_img1 = fms.logo.subsample(2,2)
+        
+        fms.logo_banner1 = Label(fms.managerdashf1, image=fms.logo_img1)
+        fms.logo_banner1.pack(side=LEFT)  
+
+        fms.managerlabel= Label(text="Weclome to User Dashboard!!", bg="#0b1335", fg="white",font=("cooper black",14))
+        fms.managerlabel.place(x=1000,y=50)
+
+        fms.logout=Button(fms.managerdashf1,text="LOGOUT", command=fms.main, bg="#0b1335",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.logout.place(x=1075,y=100)
+       
+        fms.localtime=time.asctime(time.localtime(time.time()))
+        fms.tim=Label(fms.managerdashf1,text=fms.localtime,fg="white",font=("cooper black",14),bg="#0b1335")
+        fms.managerdashf1.pack(fill=BOTH)
+
+        fms.sidebar = Frame(fms.scr, bg="#d3ede6")
+        fms.sidebar.pack(side=LEFT, fill=Y) 
+        
+        # Add buttons to the sidebar
+
+        fms.profile = Button(fms.sidebar,text="VIEW PROFILE", command=lambda:fms.Userdetails(user_id), bg="#0b1335",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.profile.grid(row=3, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+
+        fms.viewdonations= Button(fms.sidebar,text="PENDING DONATIONS", command=lambda:fms.Userdonations(user_id), bg="#0b1335",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.viewdonations.grid(row=4, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+
+        fms.viewaccepteddonations= Button(fms.sidebar,text="ACCEPTED DONATIONS", command=lambda:fms.User_accepted_donations(user_id), bg="#f39c12",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.viewaccepteddonations.grid(row=8, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+
+        # Create the main content frame
+        content_frame = Frame(fms.scr, bg="lightgray")
+        content_frame.pack(side=LEFT, fill=BOTH, expand=True)
+
+        # Create a label for the title
+        title_label = Label(content_frame, text="VIEW ACCEPTED DONATIONS", font=("Cooper Black", 16), bg="#0b1335", fg="white", pady=10)
+        title_label.pack(fill=X)
+        title_label.pack(pady=(0, 85))
+
+        # Create treeview
+        tree = ttk.Treeview(content_frame, columns=("Donation ID", "Item Name", "Item Type", "Calories", "Amount(Lbs)", "Servings", "Added By", "Status"), show="headings", padding=(0, 5))
+
+        # Set the font for the headings
+        tree.heading("Donation ID", text="Donation ID", anchor=CENTER)
+        tree.heading("Item Name", text="Item Name", anchor=CENTER)
+        tree.heading("Item Type", text="Item Type", anchor=CENTER)
+        tree.heading("Calories", text="Calories", anchor=CENTER)
+        tree.heading("Amount(Lbs)", text="Amount(Lbs)", anchor=CENTER)
+        tree.heading("Servings", text="Servings", anchor=CENTER)
+        tree.heading("Added By", text="Added By", anchor=CENTER)
+        tree.heading("Status", text="Status", anchor=CENTER)
+
+        # Configure Treeview style
+        style = ttk.Style()
+        style.configure("Custom.Treeview", font=("Cooper Black", 12))
+        style.configure("Treeview.Row", padding=(0, 5))
+
+        # Set the background color for the headers
+        style.configure("Treeview.Heading", background="gray")
+
+        # Define a tag named "my_font" with the desired font
+        tree.tag_configure("my_font", font=("Cooper Black", 12))
+
+        # Set the column widths
+        tree.column("Donation ID", width=100)
+        tree.column("Item Name", width=150)
+        tree.column("Item Type", width=150)
+        tree.column("Calories", width=150)
+        tree.column("Amount(Lbs)", width=150)
+        tree.column("Servings", width=150)
+        tree.column("Added By", width=150)
+        tree.column("Status", width=150)
+
+        tree.pack()
+        
+        # Connect to the SQLite3 database
+        conn = connect('fms.db')
+        cursor = conn.cursor()
+
+        # Fetch and display pending donations
+        cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE donation_status = 'accepted'AND user_id = ?", (user_id,))
+        pending_donations = cursor.fetchall()
+
+        for donation in pending_donations:
+            # Fetch the manager's user_name from the managers table
+            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
+            manager_name = cursor.fetchone()[0]
+
+            # Set the status color based on the donation status
+            status_color = 'red'  # Assuming pending donations are marked in red
+
+            # Insert the data into the Treeview with the status color
+            tree.insert("", END, values=(donation[0], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8]), tags=("my_font", status_color))
+
+        # Apply the "my_font" tag to all items in the treeview
+        for donation in tree.get_children():
+            tree.item(donation, tags=("my_font", status_color))
+
+        # Button to accept the selected donation
+        # accept_button = Button(content_frame, text="ACCEPT DONATION", command=lambda: accept_donation(user_id), bg="#2ecc71", fg="white", font=("Cooper Black", 12))
+        # accept_button.pack(side=LEFT, padx=500, pady=10)
 
         conn.close()
         fms.scr.mainloop()
