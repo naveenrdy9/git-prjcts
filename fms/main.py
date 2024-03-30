@@ -1019,11 +1019,10 @@ class Fms:
         title_label.pack(pady=(0, 85))
 
         # Create treeview
-        tree = ttk.Treeview(content_frame, columns=("Donation ID", "Item No", "Item Name", "Item Type", "Calories", "Amount(Lbs)", "Servings", "Added By", "Status", "Accepted By"), show="headings", padding=(0, 5))     
+        tree = ttk.Treeview(content_frame, columns=("Donation ID",  "Item Name", "Item Type", "Calories", "Amount(Lbs)", "Servings", "Added By", "Status", "Accepted By"), show="headings", padding=(0, 5))     
     
         # Set the font for the headings
         tree.heading("Donation ID", text="Donation ID", anchor=CENTER)
-        tree.heading("Item No", text="Item No", anchor=CENTER)
         tree.heading("Item Name", text="Item Name", anchor=CENTER)
         tree.heading("Item Type", text="Item Type", anchor=CENTER)
         tree.heading("Calories", text="Calories", anchor=CENTER)
@@ -1045,16 +1044,15 @@ class Fms:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
         
         # Set the column widths
-        tree.column("Donation ID", width=100)
-        tree.column("Item No", width=100)
-        tree.column("Item Name", width=125)
-        tree.column("Item Type", width=125)
-        tree.column("Calories", width=125)
-        tree.column("Amount(Lbs)", width=125)
-        tree.column("Servings", width=125)
-        tree.column("Added By", width=125)
-        tree.column("Status", width=125)
-        tree.column("Accepted By", width=125)
+        tree.column("Donation ID", width=135)
+        tree.column("Item Name", width=135)
+        tree.column("Item Type", width=135)
+        tree.column("Calories", width=135)
+        tree.column("Amount(Lbs)", width=135)
+        tree.column("Servings", width=135)
+        tree.column("Added By", width=135)
+        tree.column("Status", width=135)
+        tree.column("Accepted By", width=135)
 
         tree.pack()
 
@@ -1063,22 +1061,22 @@ class Fms:
         cursor = conn.cursor()
 
         # Fetch and display data
-        cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details")
+        cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details")
         donations = cursor.fetchall()
         
         for donation in donations:
             
             # Fetch the manager's user_name from the managers table
-            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
+            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[6],))
             manager_result = cursor.fetchone()
             manager_name = manager_result[0] if manager_result else None  # Assuming manager_id is at index 7
 
             # Fetch the user's user_name from the users table
-            cursor.execute("SELECT user_name FROM users WHERE user_id=?", (donation[9],))
+            cursor.execute("SELECT user_name FROM users WHERE user_id=?", (donation[8],))
             user_result = cursor.fetchone()
             user_name = user_result[0] if user_result else None  # Assuming user_id is at index 9
 
-            tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8], user_name))
+            tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], manager_name, donation[7], user_name))
 
         # Apply the "my_font" tag to all items in the treeview
         for donation in tree.get_children():
@@ -1177,7 +1175,7 @@ class Fms:
             pdf.set_font("Arial", size=8)
 
             # Add table headers
-            headers = ["Donation ID", "Item No", "Item Name", "Item Type", "Calories", "Amount (lb)", "Servings", "Donation Status"]
+            headers = ["Donation ID",  "Item Name", "Item Type", "Calories", "Amount (lb)", "Servings", "Donation Status"]
             col_width = 24.5
             row_height = 5
             for header in headers:
@@ -1193,7 +1191,7 @@ class Fms:
                 pdf.ln()
 
             # Specify the file path for the PDF
-            pdf_file_path = "C:/Users/navee/Downloads/FMS/donations_report.pdf"
+            pdf_file_path = "C:/Users/navee/Downloads/git-prjcts/fms/donations_report.pdf"
             pdf.output(pdf_file_path)
 
             # Show custom message after successful export
@@ -1206,13 +1204,13 @@ class Fms:
                 values.append([item_values[i] for i in range(len(item_values))])  # Convert tuple to list
 
             # Define column names
-            columns = ["Donation ID", "Item No", "Item Name", "Item Type", "Calories", "Amount (lb)", "Servings", "Donation Status"]
+            columns = ["Donation ID", "Item Name", "Item Type", "Calories", "Amount (lb)", "Servings", "Donation Status"]
 
             # Create DataFrame
             df = pd.DataFrame(values, columns=columns)
 
             # Specify the full path where you want to save the file
-            file_path = "C:/Users/navee/Downloads/FMS/donations_report.xlsx"
+            file_path = "C:/Users/navee/Downloads/git-prjcts/fms/donations_report.xlsx"
 
             # Export to Excel
             try:
@@ -1229,11 +1227,11 @@ class Fms:
             conn = connect('fms.db')
             cursor = conn.cursor()
 
-            cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, donation_status FROM donation_details")
+            cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, donation_status FROM donation_details")
             donations = cursor.fetchall()
 
             for donation in donations:
-                tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], donation[6], donation[7]))
+                tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], donation[6]))
 
             for donation in tree.get_children():
                 tree.item(donation, tags=("my_font",))
@@ -1255,7 +1253,7 @@ class Fms:
         # Your Treeview widget declaration goes here
         tree = ttk.Treeview()
         # Define tree columns
-        tree["columns"] = ("Donation ID", "Item No", "Item Name", "Item Type", "Calories", "Amount (lb)", "Servings", "Donation Status")
+        tree["columns"] = ("Donation ID",  "Item Name", "Item Type", "Calories", "Amount (lb)", "Servings", "Donation Status")
         # Set column headings
         for column in tree["columns"]:
             tree.heading(column, text=column)
@@ -1697,30 +1695,30 @@ class Fms:
             cursor = conn.cursor()
 
             # Retrieve the donation data from the database
-            cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE manager_id = ?", (manager_id,))
+            cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE manager_id = ?", (manager_id,))
             donations = cursor.fetchall()
 
             # Insert the data into the Treeview
             for donation in donations:
                 
                 # Fetch the manager's user_name from the managers table
-                cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
+                cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[6],))
                 manager_result = cursor.fetchone()
                 manager_name = manager_result[0] if manager_result else None  # Assuming manager_id is at index 7
 
                 # Fetch the user's user_name from the users table
-                cursor.execute("SELECT user_name FROM users WHERE user_id=?", (donation[9],))
+                cursor.execute("SELECT user_name FROM users WHERE user_id=?", (donation[8],))
                 user_result = cursor.fetchone()
                 user_name = user_result[0] if user_result else None  # Assuming user_id is at index 9
                 
                 # Exclude the manager_id (index 0) and donation_status (index 7) from the display
-                tree.insert("", "end", values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8], user_name), tags=("my_font"))
+                tree.insert("", "end", values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], manager_name, donation[7], user_name), tags=("my_font"))
 
             # Close the connection
             conn.close()
 
         # Function to send an email notification
-        def send_email(recipient, user_name, item_no, item_name, item_type, calories, amount_lb, servings):
+        def send_email(recipient, user_name, item_name, item_type, calories, amount_lb, servings):
             # Validate recipient email address
             if not re.match(r"[^@]+@[^@]+\.[^@]+", recipient):
                 print(f"Invalid email address: {recipient}")
@@ -1729,7 +1727,7 @@ class Fms:
             sender_email = "fms38865@gmail.com"
             sender_password = "ktee vlno ediy uiop"
             subject = "Uploaded Food Donation Updated"
-            body = f"Hello {user_name},\n\nA food donation that was previously uploaded has been updated with the following details:\n\nItem No: {item_no}\nItem Name: {item_name}\nItem Type: {item_type}\nCalories: {calories}\nAmount (lb): {amount_lb}\nServings: {servings}\n\nCheck it out!\n\nThank you,\nFood Management Team"
+            body = f"Hello {user_name},\n\nA food donation that was previously uploaded has been updated with the following details:\nItem Name: {item_name}\nItem Type: {item_type}\nCalories: {calories}\nAmount (lb): {amount_lb}\nServings: {servings}\n\nCheck it out!\n\nThank you,\nFood Management Team"
             
             # Compose email
             message = MIMEMultipart()
@@ -1760,7 +1758,7 @@ class Fms:
             # Get the values of the selected record
             values = tree.item(selected_item, "values")
             donation_id = values[0]
-            donation_status = values[8]  # Assuming donation_status is at index 8
+            donation_status = values[7]  # Assuming donation_status is at index 8
 
             # Check if the donation has already been accepted
             if donation_status == "accepted":
@@ -1770,7 +1768,7 @@ class Fms:
             # Define a function to submit the edited donation details
             def submit():
                 # Get values from entry widgets
-                item_no = item_no_entry.get()
+                # item_no = item_no_entry.get()
                 item_name = item_name_entry.get()
                 item_type = item_type_entry.get()
                 calories = calories_entry.get()
@@ -1779,7 +1777,7 @@ class Fms:
                 # manager_id = 
 
                 # Validate fields
-                if not (item_no and item_name and item_type and calories and amount_lb and servings):
+                if not (item_name and item_type and calories and amount_lb and servings):
                     show_custom_error("All fields are required")
                     return
 
@@ -1792,10 +1790,10 @@ class Fms:
 
                 try:
                     # Validate fields
-                    if not (item_no and item_name and item_type and calories and amount_lb and servings):
+                    if not ( item_name and item_type and calories and amount_lb and servings):
                         show_custom_error("All fields are required")
-                    elif not (item_no.isdigit() and calories.isdigit() and amount_lb.isdigit() and servings.isdigit()):
-                        show_custom_error("Please enter only digits for Item No, Calories, Amount (lb), and Servings.")
+                    elif not (calories.isdigit() and amount_lb.isdigit() and servings.isdigit()):
+                        show_custom_error("Please enter only digits for Calories, Amount (lb), and Servings.")
                     else:
                         # Update the donation details if donation_status is not "accepted"
                         if donation_status != "accepted":
@@ -1803,8 +1801,8 @@ class Fms:
                             print(f"Executing EDIT query: EDIT FROM donation_details WHERE donation_id = {donation_id}")
 
                             # Update donation details in the donation_details table
-                            cursor.execute("UPDATE donation_details SET item_no=?, item_name=?, item_type=?, calories=?, amount_lb=?, servings=? WHERE donation_id=?",
-                                        (item_no, item_name, item_type, calories, amount_lb, servings, donation_id))
+                            cursor.execute("UPDATE donation_details SET item_name=?, item_type=?, calories=?, amount_lb=?, servings=? WHERE donation_id=?",
+                                        (item_name, item_type, calories, amount_lb, servings, donation_id))
 
                             # Commit the changes
                             conn.commit()
@@ -1821,7 +1819,7 @@ class Fms:
 
                             # Iterate through the result and send emails
                             for user_name, email in user_data: 
-                                send_email(email, user_name, item_no, item_name, item_type, calories, amount_lb, servings)
+                                send_email(email, user_name, item_name, item_type, calories, amount_lb, servings)
 
                             # Refresh the Treeview
                             donation_data()
@@ -1855,37 +1853,37 @@ class Fms:
             edit_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
             # Create labels and entry widgets for each field
-            Label(edit_window, text="Item No:", font=("Cooper Black", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
-            item_no_entry = Entry(edit_window, font=("Cooper Black", 12))
-            item_no_entry.grid(row=0, column=1, padx=10, pady=10)
+            # Label(edit_window, text="Item No:", font=("Cooper Black", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
+            # item_no_entry = Entry(edit_window, font=("Cooper Black", 12))
+            # item_no_entry.grid(row=0, column=1, padx=10, pady=10)
 
-            Label(edit_window, text="Item Name:", font=("Cooper Black", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
+            Label(edit_window, text="Item Name:", font=("Cooper Black", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
             item_name_entry = Entry(edit_window, font=("Cooper Black", 12))
-            item_name_entry.grid(row=1, column=1, padx=10, pady=10)
+            item_name_entry.grid(row=0, column=1, padx=10, pady=10)
 
-            Label(edit_window, text="Item Type:", font=("Cooper Black", 12)).grid(row=2, column=0, padx=10, pady=10, sticky="e")
+            Label(edit_window, text="Item Type:", font=("Cooper Black", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
             item_type_entry = Entry(edit_window, font=("Cooper Black", 12))
-            item_type_entry.grid(row=2, column=1, padx=10, pady=10)
+            item_type_entry.grid(row=1, column=1, padx=10, pady=10)
 
-            Label(edit_window, text="Calories:", font=("Cooper Black", 12)).grid(row=0, column=2, padx=10, pady=10, sticky="e")
+            Label(edit_window, text="Calories:", font=("Cooper Black", 12)).grid(row=1, column=2, padx=10, pady=10, sticky="e")
             calories_entry = Entry(edit_window, font=("Cooper Black", 12))
-            calories_entry.grid(row=0, column=3, padx=10, pady=10)
+            calories_entry.grid(row=1, column=3, padx=10, pady=10)
 
-            Label(edit_window, text="Amount(Lb):", font=("Cooper Black", 12)).grid(row=1, column=2, padx=10, pady=10, sticky="e")
+            Label(edit_window, text="Amount(Lb):", font=("Cooper Black", 12)).grid(row=0, column=2, padx=10, pady=10, sticky="e")
             amount_lb_entry = Entry(edit_window, font=("Cooper Black", 12))
-            amount_lb_entry.grid(row=1, column=3, padx=10, pady=10)
+            amount_lb_entry.grid(row=0, column=3, padx=10, pady=10)
 
-            Label(edit_window, text="Servings:", font=("Cooper Black", 12)).grid(row=2, column=2, padx=10, pady=10, sticky="e")
+            Label(edit_window, text="Servings:", font=("Cooper Black", 12)).grid(row=2, column=0, padx=10, pady=10, sticky="e")
             servings_entry = Entry(edit_window, font=("Cooper Black", 12))
-            servings_entry.grid(row=2, column=3, padx=10, pady=10)
+            servings_entry.grid(row=2, column=1, padx=10, pady=10)
 
             # Populate the entry widgets with the selected manager's data
-            item_no_entry.insert(0, values[1])
-            item_name_entry.insert(0, values[2])
-            item_type_entry.insert(0, values[3])
-            calories_entry.insert(0, values[4])
-            amount_lb_entry.insert(0, values[5])
-            servings_entry.insert(0, values[6])
+            # item_no_entry.insert(0, values[1])
+            item_name_entry.insert(0, values[1])
+            item_type_entry.insert(0, values[2])
+            calories_entry.insert(0, values[3])
+            amount_lb_entry.insert(0, values[4])
+            servings_entry.insert(0, values[5])
             
             # Create a Submit button
             submit_button = Button(edit_window, text="Submit", command=submit, font=("Cooper Black", 12))
@@ -1905,7 +1903,7 @@ class Fms:
             # Get the values of the selected record
             values = tree.item(selected_item, "values")
             donation_id = values[0]
-            donation_status = values[8]  # Assuming donation_status is at index 8
+            donation_status = values[7]  # Assuming donation_status is at index 8
 
             # Check if the donation has already been accepted
             if donation_status == "accepted":
@@ -1941,7 +1939,7 @@ class Fms:
                 conn.close()
         
         # Function to send an email notification
-        def send_mail(recipient, user_name, item_no, item_name, item_type, calories, amount_lb, servings):
+        def send_mail(recipient, user_name, item_name, item_type, calories, amount_lb, servings):
             
             # Validate recipient email address
             if not re.match(r"[^@]+@[^@]+\.[^@]+", recipient):
@@ -1952,7 +1950,7 @@ class Fms:
             sender_email = "fms38865@gmail.com"
             sender_password = "ktee vlno ediy uiop"
             subject = "New Food Donation Uploaded"
-            body = f"Hello {user_name},\n\nA new food donation has been added with the following details:\n\nItem No: {item_no}\nItem Name: {item_name}\nItem Type: {item_type}\nCalories: {calories}\nAmount (lb): {amount_lb}\nServings: {servings}\n\nCheck it out!\n\nThank you,\nFood Management Team"
+            body = f"Hello {user_name},\n\nA new food donation has been added with the following details:\nItem Name: {item_name}\nItem Type: {item_type}\nCalories: {calories}\nAmount (lb): {amount_lb}\nServings: {servings}\n\nCheck it out!\n\nThank you,\nFood Management Team"
 
             # Compose email
             message = MIMEMultipart()
@@ -1979,8 +1977,7 @@ class Fms:
             # SQL query to create the table if it does not exist
             create_table_query = '''
             CREATE TABLE IF NOT EXISTS donation_details (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                item_no TEXT NOT NULL,
+                donation_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 item_name TEXT NOT NULL,
                 item_type TEXT NOT NULL,
                 calories INTEGER NOT NULL,
@@ -1998,7 +1995,7 @@ class Fms:
         def add_donation():
             def submit():
                 # Get values from entry widgets
-                item_no = item_no_entry.get()
+                # item_no = item_no_entry.get()
                 item_name = item_name_entry.get()
                 item_type = item_type_entry.get()
                 calories = calories_entry.get()
@@ -2009,7 +2006,7 @@ class Fms:
                 insertion_successful = False
 
                 # Validate fields
-                if not (item_no and item_name and item_type and calories and amount_lb and servings):
+                if not ( item_name and item_type and calories and amount_lb and servings):
                     show_custom_error("All fields are required")
                 else:
                     try:
@@ -2019,12 +2016,12 @@ class Fms:
                         cursor = conn.cursor()
 
                         # Validate inputs
-                        if not (item_no.isdigit() and calories.isdigit() and amount_lb.isdigit() and servings.isdigit()):
-                            show_custom_error("Please enter only digits for Item No, Calories, Amount (lb), and Servings.")
+                        if not ( calories.isdigit() and amount_lb.isdigit() and servings.isdigit()):
+                            show_custom_error("Please enter only digits for Calories, Amount (lb), and Servings.")
                         else:
                             # Insert new manager into the managers table
-                            cursor.execute("INSERT INTO donation_details (item_no, item_name, item_type, calories, amount_lb, servings, manager_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                                        (item_no, item_name, item_type, calories, amount_lb, servings, manager_id))
+                            cursor.execute("INSERT INTO donation_details (item_name, item_type, calories, amount_lb, servings, manager_id) VALUES (?, ?, ?, ?, ?, ?)",
+                                        (item_name, item_type, calories, amount_lb, servings, manager_id))
 
                             # Commit the changes
                             conn.commit()
@@ -2041,7 +2038,7 @@ class Fms:
 
                             # Iterate through the result and send emails
                             for user_name, email in user_data: 
-                                send_mail(email, user_name, item_no, item_name, item_type, calories, amount_lb, servings)
+                                send_mail(email, user_name, item_name, item_type, calories, amount_lb, servings)
 
                             # Refresh the Treeview
                             donation_data()
@@ -2073,30 +2070,30 @@ class Fms:
             # Set the geometry of the window to be centered and larger
             add_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-              # Create labels and entry widgets for each field
-            Label(add_window, text="Item No:", font=("Cooper Black", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
-            item_no_entry = Entry(add_window, font=("Cooper Black", 12))
-            item_no_entry.grid(row=0, column=1, padx=10, pady=10)
+            # Create labels and entry widgets for each field
+            # Label(add_window, text="Item No:", font=("Cooper Black", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
+            # item_no_entry = Entry(add_window, font=("Cooper Black", 12))
+            # item_no_entry.grid(row=0, column=1, padx=10, pady=10)
 
-            Label(add_window, text="Item Name:", font=("Cooper Black", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
+            Label(add_window, text="Item Name:", font=("Cooper Black", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
             item_name_entry = Entry(add_window, font=("Cooper Black", 12))
-            item_name_entry.grid(row=1, column=1, padx=10, pady=10)
+            item_name_entry.grid(row=0, column=1, padx=10, pady=10)
 
-            Label(add_window, text="Item Type:", font=("Cooper Black", 12)).grid(row=2, column=0, padx=10, pady=10, sticky="e")
-            item_type_entry = Entry(add_window, font=("Cooper Black", 12))
-            item_type_entry.grid(row=2, column=1, padx=10, pady=10)
-
-            Label(add_window, text="Calories:", font=("Cooper Black", 12)).grid(row=0, column=2, padx=10, pady=10, sticky="e")
-            calories_entry = Entry(add_window, font=("Cooper Black", 12))
-            calories_entry.grid(row=0, column=3, padx=10, pady=10)
-
-            Label(add_window, text="Amount(Lb):", font=("Cooper Black", 12)).grid(row=1, column=2, padx=10, pady=10, sticky="e")
+            Label(add_window, text="Amount(Lb):", font=("Cooper Black", 12)).grid(row=0, column=2, padx=10, pady=10, sticky="e")
             amount_lb_entry = Entry(add_window, font=("Cooper Black", 12))
-            amount_lb_entry.grid(row=1, column=3, padx=10, pady=10)
-        
-            Label(add_window, text="Servings:", font=("Cooper Black", 12)).grid(row=2, column=2, padx=10, pady=10, sticky="e")
+            amount_lb_entry.grid(row=0, column=3, padx=10, pady=10)
+
+            Label(add_window, text="Item Type:", font=("Cooper Black", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
+            item_type_entry = Entry(add_window, font=("Cooper Black", 12))
+            item_type_entry.grid(row=1, column=1, padx=10, pady=10)
+
+            Label(add_window, text="Calories:", font=("Cooper Black", 12)).grid(row=1, column=2, padx=10, pady=10, sticky="e")
+            calories_entry = Entry(add_window, font=("Cooper Black", 12))
+            calories_entry.grid(row=1, column=3, padx=10, pady=10)
+
+            Label(add_window, text="Servings:", font=("Cooper Black", 12)).grid(row=2, column=0, padx=10, pady=10, sticky="e")
             servings_entry = Entry(add_window, font=("Cooper Black", 12))
-            servings_entry.grid(row=2, column=3, padx=10, pady=10)
+            servings_entry.grid(row=2, column=1, padx=10, pady=10)
         
             # Create a Submit button
             submit_button = Button(add_window, text="Submit", command=submit, font=("Cooper Black", 12))
@@ -2115,11 +2112,11 @@ class Fms:
         title_label.pack(pady=(0, 85))
 
         # Create treeview
-        tree = ttk.Treeview(content_frame, columns=("Donation ID", "Item No", "Item Name", "Item Type", "Calories", "Amount(Lbs)", "Servings", "Added By", "Status", "Accepted By"), show="headings", padding=(0, 5))     
+        tree = ttk.Treeview(content_frame, columns=("Donation ID",  "Item Name", "Item Type", "Calories", "Amount(Lbs)", "Servings", "Added By", "Status", "Accepted By"), show="headings", padding=(0, 5))     
     
         # Set the font for the headings
         tree.heading("Donation ID", text="Donation ID", anchor=CENTER)
-        tree.heading("Item No", text="Item No", anchor=CENTER)
+        
         tree.heading("Item Name", text="Item Name", anchor=CENTER)
         tree.heading("Item Type", text="Item Type", anchor=CENTER)
         tree.heading("Calories", text="Calories", anchor=CENTER)
@@ -2141,16 +2138,16 @@ class Fms:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
 
         # Set the column widths
-        tree.column("Donation ID", width=100)
-        tree.column("Item No", width=100)
-        tree.column("Item Name", width=125)
-        tree.column("Item Type", width=125)
-        tree.column("Calories", width=125)
-        tree.column("Amount(Lbs)", width=125)
-        tree.column("Servings", width=125)
-        tree.column("Added By", width=125)
-        tree.column("Status", width=125)
-        tree.column("Accepted By", width=125)
+        tree.column("Donation ID", width=135)
+        
+        tree.column("Item Name", width=135)
+        tree.column("Item Type", width=135)
+        tree.column("Calories", width=135)
+        tree.column("Amount(Lbs)", width=135)
+        tree.column("Servings", width=135)
+        tree.column("Added By", width=135)
+        tree.column("Status", width=135)
+        tree.column("Accepted By", width=135)
         
         tree.pack()
 
@@ -2159,22 +2156,22 @@ class Fms:
         cursor = conn.cursor()
         
        # Fetch and display data
-        cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE manager_id = ?", (manager_id,))
+        cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE manager_id = ?", (manager_id,))
         donations = cursor.fetchall()
         
         for donation in donations:
             
             # Fetch the manager's user_name from the managers table
-            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
+            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[6],))
             manager_result = cursor.fetchone()
             manager_name = manager_result[0] if manager_result else None  # Assuming manager_id is at index 6
 
             # Fetch the user's user_name from the users table
-            cursor.execute("SELECT user_name FROM users WHERE user_id=?", (donation[9],))
+            cursor.execute("SELECT user_name FROM users WHERE user_id=?", (donation[8],))
             user_result = cursor.fetchone()
             user_name = user_result[0] if user_result else None  # Assuming user_id is at index 8
 
-            tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8], user_name))
+            tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], manager_name, donation[7], user_name))
 
         # Apply the "my_font" tag to all items in the treeview
         for donation in tree.get_children():
@@ -2236,7 +2233,6 @@ class Fms:
         fms.sidebar.pack(side=LEFT, fill=Y) 
         
         # Add buttons to the sidebar
-        # fms.button_width = 20  # Adjust the width as needed
 
         fms.profile = Button(fms.sidebar,text="VIEW PROFILE", command=lambda:fms.Userdetails(user_id), bg="#f39c12",cursor="hand2",
                       fg="white",font=("cooper black",14))
@@ -2632,19 +2628,19 @@ class Fms:
 
             try:
                 # Fetch and display pending donations
-                cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status FROM donation_details WHERE donation_status = 'pending'")
+                cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status FROM donation_details WHERE donation_status = 'pending'")
                 pending_donations = cursor.fetchall()
 
                 for donation in pending_donations:
                     # Fetch the manager's user_name from the managers table
-                    cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
+                    cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[6],))
                     manager_name = cursor.fetchone()[0]  # Assuming manager_id is at index 7
 
                     # Set the status color based on the donation status
                     status_color = 'red'  # Assuming pending donations are marked in red
 
                     # Insert a checkbox in the first column for selecting the donation
-                    tree.insert("", END, values=(donation[0], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8]), tags=("my_font", status_color))
+                    tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], manager_name, donation[7]), tags=("my_font", status_color))
 
                 # Apply the "my_font" tag to all items in the treeview
                 for donation in tree.get_children():
@@ -2698,7 +2694,7 @@ class Fms:
                     sender_email = "fms38865@gmail.com"
                     sender_password = "ktee vlno ediy uiop"
                     subject = "Donation Accepted"
-                    message = f"Hello {manager_name},\n\nYour food donation has been accepted by {user_name} with the following details:\n\nDonation Id: {donation_id}\nItem Name: {item_name}\nItem Type: {item_type}\nCalories: {calories}\nAmount (lb): {amount_lb}\nServings: {servings}\n\nThank you,\nFood Management Team"
+                    message = f"Hello {manager_name},\n\nYour food donation has been accepted by {user_name} with the following details:\n\nItem Name: {item_name}\nItem Type: {item_type}\nCalories: {calories}\nAmount (lb): {amount_lb}\nServings: {servings}\n\nThank you,\nFood Management Team"
                     
                     # Send email to the manager
                     msg = MIMEMultipart()
@@ -2761,7 +2757,7 @@ class Fms:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
 
         # Set the column widths
-        tree.column("Donation ID", width=100)
+        tree.column("Donation ID", width=150)
         tree.column("Item Name", width=150)
         tree.column("Item Type", width=150)
         tree.column("Calories", width=150)
@@ -2777,19 +2773,19 @@ class Fms:
         cursor = conn.cursor()
 
         # Fetch and display pending donations
-        cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE donation_status = 'pending'")
+        cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE donation_status = 'pending'")
         pending_donations = cursor.fetchall()
 
         for donation in pending_donations:
             # Fetch the manager's user_name from the managers table
-            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
+            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[6],))
             manager_name = cursor.fetchone()[0]
 
             # Set the status color based on the donation status
             status_color = 'red'  # Assuming pending donations are marked in red
 
             # Insert the data into the Treeview with the status color
-            tree.insert("", END, values=(donation[0], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8]), tags=("my_font", status_color))
+            tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], manager_name, donation[7]), tags=("my_font", status_color))
 
         # Apply the "my_font" tag to all items in the treeview
         for donation in tree.get_children():
@@ -2903,19 +2899,19 @@ class Fms:
         cursor = conn.cursor()
 
         # Fetch and display pending donations
-        cursor.execute("SELECT donation_id, item_no, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE donation_status = 'accepted'AND user_id = ?", (user_id,))
+        cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE donation_status = 'accepted'AND user_id = ?", (user_id,))
         pending_donations = cursor.fetchall()
 
         for donation in pending_donations:
             # Fetch the manager's user_name from the managers table
-            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[7],))
+            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[6],))
             manager_name = cursor.fetchone()[0]
 
             # Set the status color based on the donation status
             status_color = 'red'  # Assuming pending donations are marked in red
 
             # Insert the data into the Treeview with the status color
-            tree.insert("", END, values=(donation[0], donation[2], donation[3], donation[4], donation[5], donation[6], manager_name, donation[8]), tags=("my_font", status_color))
+            tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], manager_name, donation[7]), tags=("my_font", status_color))
 
         # Apply the "my_font" tag to all items in the treeview
         for donation in tree.get_children():
