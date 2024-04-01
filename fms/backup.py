@@ -1319,7 +1319,7 @@ class Fms:
         fms.profilepage = Button(fms.sidebar,text="VIEW PROFILE", command=lambda:fms.Managerdetails(manager_id), bg="#f39c12",cursor="hand2", fg="white", font=("cooper black",14))
         fms.profilepage.grid(row=4, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
        
-        fms.viewdonations= Button(fms.sidebar,text="PENDING DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#0b1335",cursor="hand2", fg="white", font=("cooper black",14))
+        fms.viewdonations= Button(fms.sidebar,text="VIEW DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#0b1335",cursor="hand2", fg="white", font=("cooper black",14))
         fms.viewdonations.grid(row=8, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
 
         fms.viewaccepteddonations= Button(fms.sidebar,text="ACCEPTED DONATIONS", command=lambda:fms.Mview_accepted_donations(manager_id), bg="#0b1335",cursor="hand2", fg="white", font=("cooper black",14))
@@ -1624,7 +1624,7 @@ class Fms:
                       fg="white",font=("cooper black",14))
         fms.profilepage.grid(row=4, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
        
-        fms.viewdonations= Button(fms.sidebar,text="PENDING DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#f39c12",cursor="hand2",
+        fms.viewdonations= Button(fms.sidebar,text="VIEW DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#f39c12",cursor="hand2",
                       fg="white",font=("cooper black",14))
         fms.viewdonations.grid(row=8, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
 
@@ -2238,7 +2238,7 @@ class Fms:
                       fg="white",font=("cooper black",14))
         fms.profilepage.grid(row=4, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
        
-        fms.viewdonations= Button(fms.sidebar,text="PENDING DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#0b1335",cursor="hand2",
+        fms.viewdonations= Button(fms.sidebar,text="VIEW DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#0b1335",cursor="hand2",
                       fg="white",font=("cooper black",14))
         fms.viewdonations.grid(row=8, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
 
@@ -2251,7 +2251,7 @@ class Fms:
         content_frame.pack(side=LEFT, fill=BOTH, expand=True)
 
         # Create a label for the title
-        title_label = Label(content_frame, text="VIEW DONATIONS", font=("Cooper Black", 16), bg="#0b1335", fg="white", pady=10)
+        title_label = Label(content_frame, text="VIEW ACCEPTED DONATIONS", font=("Cooper Black", 16), bg="#0b1335", fg="white", pady=10)
         title_label.pack(fill=X)
         title_label.pack(pady=(0, 85))
 
