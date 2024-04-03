@@ -6,3 +6,5 @@ Color Codes
 #3498db – Sky Blue
 #0b1335 – Dark Blue
 
+To Pull the Code From Master
+git pull origin master
