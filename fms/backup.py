@@ -18,13 +18,13 @@ from hashlib import sha256
 from fpdf import FPDF
 import pandas as pd
 
-class Fms:
-
 #---------------------------------------------------All Login Pages Code Start--------------------------------------------------------------------#    
 
 #---------------------------------------------------Main/User Login Page--------------------------------------------------------------------------#
+class FoodManagementSystem:
     
     def main(fms):
+        
         try:
             fms.scr.destroy()
             fms.scr=Tk()
@@ -33,15 +33,15 @@ class Fms:
                 fms.scr=Tk()
             except:
                 pass
-
+            
+        fms.scr.title("FOOD MANAGEMENT SYSTEM")
+        
         # getting screen width and height of display
         width= fms.scr.winfo_screenwidth() 
         height= fms.scr.winfo_screenheight()
         
         #setting tkinter window size
         fms.scr.geometry("%dx%d" % (width, height))
-        
-        fms.scr.title("FOOD MANAGEMENT SYSTEM")
  
         # Logo picture   
         fms.loginf1=Frame(fms.scr, bg="#ffffff")
@@ -53,35 +53,46 @@ class Fms:
         fms.logo_banner.place(x=0,y=0)
         fms.logo_banner.pack(side=LEFT)  
 
-        fms.home=Button(fms.loginf1,text="Home", command=fms.main, bg="#0b1335",cursor="hand2",fg="white",font=("cooper black",14))
-        fms.home.place(x=925,y=100)
-       
-        fms.adlog=Button(fms.loginf1,text="Admin Login",command=fms.Adminlogin,cursor="hand2", bg="#0b1335",fg="white",font=("cooper black",14))
-        fms.adlog.place(x=1025,y=100)
-       
-        fms.abt=Button(fms.loginf1,text="Manager Login", command=fms.Managerlogin, bg="#0b1335",cursor="hand2", fg="white",font=("cooper black",14))
-        fms.abt.place(x=1200,y=100)
-
         # code to display the local time
         fms.localtime=time.asctime(time.localtime(time.time()))
         fms.tim=Label(fms.loginf1,text=fms.localtime,fg="white",font=("cooper black",14),bg="#0b1335")
-        fms.tim.place(x=1000,y=50)
+        fms.tim.pack(pady=45, anchor=N)
+
+        # Buttons
+        buttons_frame = Frame(fms.loginf1, bg="#ffffff")
+        buttons_frame.pack(pady=0)
+
+        fms.home=Button(buttons_frame,text="Home", command=fms.main, bg="#0b1335",cursor="hand2",fg="white",font=("cooper black",14))
+        fms.home.grid(row=0, column=0, padx=10)
+       
+        fms.adlog=Button(buttons_frame,text="Admin Login",command=fms.Adminlogin,cursor="hand2", bg="#0b1335",fg="white",font=("cooper black",14))
+        fms.adlog.grid(row=0, column=1, padx=10)
+       
+        fms.abt=Button(buttons_frame,text="Manager Login", command=fms.Managerlogin, bg="#0b1335",cursor="hand2", fg="white",font=("cooper black",14))
+        fms.abt.grid(row=0, column=2, padx=10)
 
         fms.loginf2=Frame(fms.scr,height=1080,width=1920)
+        fms.loginf2.pack(fill=BOTH,expand= YES) 
+        
         fms.c=Canvas(fms.loginf2,height=1080,width=1920)
-
         fms.c.pack()
+        
         fms.fmain=PhotoImage(file="main.png")
         fms.c.create_image(650,309,image=fms.fmain)
         fms.c.create_rectangle(350,100,1020,475,fill="#d3ede6",outline="white",width=6)
+        
         fms.log=Label(fms.loginf2,text="USER LOGIN",fg="white",bg="#0b1335",width=27,font=("cooper black",27))
         fms.log.place(x=357,y=110)
+        
         fms.lab1=Label(fms.loginf2,text="User Name",bg="#d3ede6",font=("cooper black",22))
         fms.lab1.place(x=360,y=200)
+        
         fms.user=Entry(fms.loginf2,bg="white",font=("cooper black",22),bd=5)
         fms.user.place(x=650,y=200)
+        
         fms.lab2=Label(fms.loginf2,text="Password",bg="#d3ede6",font=("cooper black",22))
         fms.lab2.place(x=360,y=270)
+        
         fms.pasd=Entry(fms.loginf2,bg="white",font=("cooper black",22),bd=5, show="*")
         fms.pasd.place(x=650,y=270)
 
@@ -97,8 +108,7 @@ class Fms:
         def clear(fms):
             fms.user.delete(0,END)
             fms.pasd.delete(0,END)
-        
-        fms.loginf2.pack(fill=BOTH,expand= YES)        
+               
         fms.scr.mainloop()
          
 #---------------------------------------------------Admin Login Page------------------------------------------------------------------------------#
@@ -3207,6 +3217,6 @@ class Fms:
                 fms.Managerdetails(manager_id)
 
 #---------------------------------------------------Database Connections Code End-----------------------------------------------------------------#    
-
-x=Fms()
+                
+x = FoodManagementSystem()
 x.main()
