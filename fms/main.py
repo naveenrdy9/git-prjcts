@@ -18,13 +18,13 @@ from hashlib import sha256
 from fpdf import FPDF
 import pandas as pd
 
-class Fms:
+#---------------------------------------------------All Login Pages Code Start--------------------------------------------------------------------#    
 
-#--------------------------------------------------- All Login Pages Code Start ------------------------------------------------------------------#    
-
-#--  Main/User Login Page-----------------
+#---------------------------------------------------Main/User Login Page--------------------------------------------------------------------------#
+class FoodManagementSystem:
     
     def main(fms):
+        
         try:
             fms.scr.destroy()
             fms.scr=Tk()
@@ -33,15 +33,15 @@ class Fms:
                 fms.scr=Tk()
             except:
                 pass
-
+            
+        fms.scr.title("FOOD MANAGEMENT SYSTEM")
+        
         # getting screen width and height of display
         width= fms.scr.winfo_screenwidth() 
         height= fms.scr.winfo_screenheight()
         
         #setting tkinter window size
         fms.scr.geometry("%dx%d" % (width, height))
-        
-        fms.scr.title("FOOD MANAGEMENT SYSTEM")
  
         # Logo picture   
         fms.loginf1=Frame(fms.scr, bg="#ffffff")
@@ -53,35 +53,46 @@ class Fms:
         fms.logo_banner.place(x=0,y=0)
         fms.logo_banner.pack(side=LEFT)  
 
-        fms.home=Button(fms.loginf1,text="Home", command=fms.main, bg="#0b1335",cursor="hand2",fg="white",font=("cooper black",14))
-        fms.home.place(x=925,y=100)
-       
-        fms.adlog=Button(fms.loginf1,text="Admin Login",command=fms.Adminlogin,cursor="hand2", bg="#0b1335",fg="white",font=("cooper black",14))
-        fms.adlog.place(x=1025,y=100)
-       
-        fms.abt=Button(fms.loginf1,text="Manager Login", command=fms.Managerlogin, bg="#0b1335",cursor="hand2", fg="white",font=("cooper black",14))
-        fms.abt.place(x=1200,y=100)
-
         # code to display the local time
         fms.localtime=time.asctime(time.localtime(time.time()))
         fms.tim=Label(fms.loginf1,text=fms.localtime,fg="white",font=("cooper black",14),bg="#0b1335")
-        fms.tim.place(x=1000,y=50)
+        fms.tim.pack(pady=45, anchor=N)
+
+        # Buttons
+        buttons_frame = Frame(fms.loginf1, bg="#ffffff")
+        buttons_frame.pack(pady=0)
+
+        fms.home=Button(buttons_frame,text="Home", command=fms.main, bg="#0b1335",cursor="hand2",fg="white",font=("cooper black",14))
+        fms.home.grid(row=0, column=0, padx=10)
+       
+        fms.adlog=Button(buttons_frame,text="Admin Login",command=fms.Adminlogin,cursor="hand2", bg="#0b1335",fg="white",font=("cooper black",14))
+        fms.adlog.grid(row=0, column=1, padx=10)
+       
+        fms.abt=Button(buttons_frame,text="Manager Login", command=fms.Managerlogin, bg="#0b1335",cursor="hand2", fg="white",font=("cooper black",14))
+        fms.abt.grid(row=0, column=2, padx=10)
 
         fms.loginf2=Frame(fms.scr,height=1080,width=1920)
+        fms.loginf2.pack(fill=BOTH,expand= YES) 
+        
         fms.c=Canvas(fms.loginf2,height=1080,width=1920)
-
         fms.c.pack()
+        
         fms.fmain=PhotoImage(file="main.png")
         fms.c.create_image(650,309,image=fms.fmain)
         fms.c.create_rectangle(350,100,1020,475,fill="#d3ede6",outline="white",width=6)
+        
         fms.log=Label(fms.loginf2,text="USER LOGIN",fg="white",bg="#0b1335",width=27,font=("cooper black",27))
         fms.log.place(x=357,y=110)
+        
         fms.lab1=Label(fms.loginf2,text="User Name",bg="#d3ede6",font=("cooper black",22))
         fms.lab1.place(x=360,y=200)
+        
         fms.user=Entry(fms.loginf2,bg="white",font=("cooper black",22),bd=5)
         fms.user.place(x=650,y=200)
+        
         fms.lab2=Label(fms.loginf2,text="Password",bg="#d3ede6",font=("cooper black",22))
         fms.lab2.place(x=360,y=270)
+        
         fms.pasd=Entry(fms.loginf2,bg="white",font=("cooper black",22),bd=5, show="*")
         fms.pasd.place(x=650,y=270)
 
@@ -97,11 +108,10 @@ class Fms:
         def clear(fms):
             fms.user.delete(0,END)
             fms.pasd.delete(0,END)
-        
-        fms.loginf2.pack(fill=BOTH,expand= YES)        
+               
         fms.scr.mainloop()
          
-#--  Admin Login Page ------
+#---------------------------------------------------Admin Login Page------------------------------------------------------------------------------#
         
     def Adminlogin(fms):
 
@@ -170,7 +180,7 @@ class Fms:
    
         fms.scr.mainloop()
 
-#--  Manager Login Page ------
+#---------------------------------------------------Manager Login Page----------------------------------------------------------------------------#
 
     def Managerlogin(fms):
 
@@ -237,9 +247,9 @@ class Fms:
    
         fms.scr.mainloop()
 
-#----------------------------------------------------- All Login Pages Code End -----------------------------------------------------------------#    
+#---------------------------------------------------All Login Pages Code End----------------------------------------------------------------------#    
 
-#------------------------------------------------------User Registration Page Start--------------------------------------------------------------------#
+#---------------------------------------------------User Registration Page Start------------------------------------------------------------------#
    
     def Register(fms):
         
@@ -338,11 +348,11 @@ class Fms:
         
         fms.scr.mainloop()
 
-#------------------------------------------------------User Registration Page End-----------------------------------------------------------------#
+#---------------------------------------------------User Registration Page End--------------------------------------------------------------------#
 
-#-------------------------------------------------- Admin Dashboard Code Start -------------------------------------------------------------------#    
+#---------------------------------------------------Admin Dashboard Code Start -------------------------------------------------------------------#    
 
-#-- View All Managers Page ---
+#---------------------------------------------------Admin All Managers Page-----------------------------------------------------------------------#
     
     def Viewmanagers(fms):
 
@@ -842,7 +852,7 @@ class Fms:
 
         fms.scr.mainloop()
     
-#-- View All Users Page ---
+#---------------------------------------------------Admin All Users Page--------------------------------------------------------------------------#
     
     def Viewusers(fms):
 
@@ -952,7 +962,7 @@ class Fms:
         conn.close()
         fms.scr.mainloop()
         
-#-- View All Donations Page ---
+#---------------------------------------------------Admin All Donations Page----------------------------------------------------------------------#
     
     def Viewdonations(fms):
 
@@ -1044,8 +1054,8 @@ class Fms:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
         
         # Set the column widths
-        tree.column("Donation ID", width=135)
-        tree.column("Item Name", width=135)
+        tree.column("Donation ID", width=100)
+        tree.column("Item Name", width=170)
         tree.column("Item Type", width=135)
         tree.column("Calories", width=135)
         tree.column("Amount(Lbs)", width=135)
@@ -1085,7 +1095,7 @@ class Fms:
         conn.close()
         fms.scr.mainloop()
 
-#-- View All Reports Page ------
+#---------------------------------------------------Admin Reports Page----------------------------------------------------------------------------#
     
     def Viewreports(fms):
         
@@ -1272,11 +1282,11 @@ class Fms:
      
         fms.scr.mainloop()
 
-#-------------------------------------------------- Admin Dashboard Code End ---------------------------------------------------------------------#    
+#---------------------------------------------------Admin Dashboard Code End----------------------------------------------------------------------#    
 
-#-------------------------------------------------- Manager Dashboard Code Start -----------------------------------------------------------------#    
+#---------------------------------------------------Manager Dashboard Code Start------------------------------------------------------------------#    
 
-#-- Manager Main Page ------
+#---------------------------------------------------Manager Main Page-----------------------------------------------------------------------------#
     
     def Managerdetails(fms, manager_id):
 
@@ -1316,15 +1326,14 @@ class Fms:
         fms.sidebar = Frame(fms.scr, bg="#d3ede6")
         fms.sidebar.pack(side=LEFT, fill=Y) 
 
-        fms.profilepage = Button(fms.sidebar,text="VIEW PROFILE", command=lambda:fms.Managerdetails(manager_id), bg="#f39c12",cursor="hand2",
-                      fg="white",font=("cooper black",14))
-        fms.profilepage.grid(row=2, column=0, ipadx=25, padx=25, pady=25)
-        # fms.viewdonations.pack(padx=50, pady = 25)
+        fms.profilepage = Button(fms.sidebar,text="VIEW PROFILE", command=lambda:fms.Managerdetails(manager_id), bg="#f39c12",cursor="hand2", fg="white", font=("cooper black",14))
+        fms.profilepage.grid(row=4, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+       
+        fms.viewdonations= Button(fms.sidebar,text="VIEW DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#0b1335",cursor="hand2", fg="white", font=("cooper black",14))
+        fms.viewdonations.grid(row=8, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
 
-        fms.viewdonations= Button(fms.sidebar,text="VIEW DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#0b1335",cursor="hand2",
-                      fg="white",font=("cooper black",14))
-        fms.viewdonations.grid(row=3, column=0, ipadx=8, padx=25, pady=25)
-        # fms.viewdonations.pack(padx=50, pady = 25)
+        fms.viewaccepteddonations= Button(fms.sidebar,text="ACCEPTED DONATIONS", command=lambda:fms.Mview_accepted_donations(manager_id), bg="#0b1335",cursor="hand2", fg="white", font=("cooper black",14))
+        fms.viewaccepteddonations.grid(row=12, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
         
         def show_custom_messages(message):
             # Create a new top-level window
@@ -1580,7 +1589,7 @@ class Fms:
 
         fms.scr.mainloop()
 
-#--- Manager view donations Page -----
+#---------------------------------------------------Manager Pending Donations Page----------------------------------------------------------------#
     
     def Mviewdonations(fms, manager_id):
 
@@ -1623,11 +1632,15 @@ class Fms:
 
         fms.profilepage = Button(fms.sidebar,text="VIEW PROFILE", command=lambda:fms.Managerdetails(manager_id), bg="#0b1335",cursor="hand2",
                       fg="white",font=("cooper black",14))
-        fms.profilepage.grid(row=2, column=0, ipadx=25, padx=25, pady=25)
-        
+        fms.profilepage.grid(row=4, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+       
         fms.viewdonations= Button(fms.sidebar,text="VIEW DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#f39c12",cursor="hand2",
                       fg="white",font=("cooper black",14))
-        fms.viewdonations.grid(row=3, column=0, ipadx=8, padx=25, pady=25)
+        fms.viewdonations.grid(row=8, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+
+        fms.viewaccepteddonations= Button(fms.sidebar,text="ACCEPTED DONATIONS", command=lambda:fms.Mview_accepted_donations(manager_id), bg="#0b1335",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.viewaccepteddonations.grid(row=12, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
 
         def show_custom_messages(message):
             # Create a new top-level window
@@ -1695,7 +1708,7 @@ class Fms:
             cursor = conn.cursor()
 
             # Retrieve the donation data from the database
-            cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE manager_id = ?", (manager_id,))
+            cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE manager_id = ? and donation_status = 'pending'", (manager_id,))
             donations = cursor.fetchall()
 
             # Insert the data into the Treeview
@@ -2138,9 +2151,9 @@ class Fms:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
 
         # Set the column widths
-        tree.column("Donation ID", width=135)
+        tree.column("Donation ID", width=100)
         
-        tree.column("Item Name", width=135)
+        tree.column("Item Name", width=170)
         tree.column("Item Type", width=135)
         tree.column("Calories", width=135)
         tree.column("Amount(Lbs)", width=135)
@@ -2156,7 +2169,7 @@ class Fms:
         cursor = conn.cursor()
         
        # Fetch and display data
-        cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE manager_id = ?", (manager_id,))
+        cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE manager_id = ? and donation_status = 'pending'", (manager_id,))
         donations = cursor.fetchall()
         
         for donation in donations:
@@ -2190,11 +2203,152 @@ class Fms:
         conn.close()
         fms.scr.mainloop()
 
-#------------------------------------------------------- Manager Dashboard Code End --------------------------------------------------------------#    
+#---------------------------------------------------Manager Accepted Donations Page---------------------------------------------------------------#
 
-#------------------------------------------------------------- User Dashboard Code Start ---------------------------------------------------------#    
+    def Mview_accepted_donations(fms, manager_id):
 
-#--  User Main Page------       
+        fms.scr.destroy()
+        fms.scr = Tk()
+        
+        # getting screen width and height of display
+        width= fms.scr.winfo_screenwidth() 
+        height= fms.scr.winfo_screenheight()
+        
+        #setting tkinter window size
+        fms.scr.geometry("%dx%d" % (width, height))
+        
+        fms.scr.title("FOOD MANAGEMENT SYSTEM")
+        
+        fms.managerdashf1= Frame(fms.scr, bg="#ffffff")
+
+        fms.logo = PhotoImage(file="logo.png")
+        fms.logo_img1 = fms.logo.subsample(2,2)
+        
+        fms.logo_banner1 = Label(fms.managerdashf1, image=fms.logo_img1)
+        fms.logo_banner1.pack(side=LEFT)  
+
+        fms.managerlabel= Label(text="Weclome to Manager Dashboard!!", bg="#0b1335", fg="white",font=("cooper black",14))
+        fms.managerlabel.place(x=1000,y=50)
+
+        fms.logout=Button(fms.managerdashf1,text="LOGOUT", command=fms.main, bg="#0b1335",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.logout.place(x=1075,y=100)
+    
+        # code to display the local time
+        fms.localtime=time.asctime(time.localtime(time.time()))
+        fms.tim=Label(fms.managerdashf1,text=fms.localtime,fg="white",font=("cooper black",14),bg="#0b1335")
+        fms.managerdashf1.pack(fill=BOTH)
+
+        fms.sidebar = Frame(fms.scr, bg="#d3ede6")
+        fms.sidebar.pack(side=LEFT, fill=Y) 
+        
+        # Add buttons to the sidebar
+
+        fms.profilepage = Button(fms.sidebar,text="VIEW PROFILE", command=lambda:fms.Managerdetails(manager_id), bg="#0b1335",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.profilepage.grid(row=4, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+       
+        fms.viewdonations= Button(fms.sidebar,text="VIEW DONATIONS", command=lambda:fms.Mviewdonations(manager_id), bg="#0b1335",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.viewdonations.grid(row=8, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+
+        fms.viewaccepteddonations= Button(fms.sidebar,text="ACCEPTED DONATIONS", command=lambda:fms.Mview_accepted_donations(manager_id), bg="#f39c12",cursor="hand2",
+                      fg="white",font=("cooper black",14))
+        fms.viewaccepteddonations.grid(row=12, column=0, ipadx=0, padx=15, pady=15, sticky="ew")
+    
+        # Create the main content frame
+        content_frame = Frame(fms.scr, bg="lightgray")
+        content_frame.pack(side=LEFT, fill=BOTH, expand=True)
+
+        # Create a label for the title
+        title_label = Label(content_frame, text="VIEW ACCEPTED DONATIONS", font=("Cooper Black", 16), bg="#0b1335", fg="white", pady=10)
+        title_label.pack(fill=X)
+        title_label.pack(pady=(0, 85))
+
+        # Create treeview
+        tree = ttk.Treeview(content_frame, columns=("Donation ID",  "Item Name", "Item Type", "Calories", "Amount(Lbs)", "Servings", "Added By", "Status", "Accepted By"), show="headings", padding=(0, 5))     
+    
+        # Set the font for the headings
+        tree.heading("Donation ID", text="Donation ID", anchor=CENTER)
+        
+        tree.heading("Item Name", text="Item Name", anchor=CENTER)
+        tree.heading("Item Type", text="Item Type", anchor=CENTER)
+        tree.heading("Calories", text="Calories", anchor=CENTER)
+        tree.heading("Amount(Lbs)", text="Amount(Lbs)", anchor=CENTER)
+        tree.heading("Servings", text="Servings", anchor=CENTER)
+        tree.heading("Added By", text="Added By", anchor=CENTER)
+        tree.heading("Status", text="Status", anchor=CENTER)
+        tree.heading("Accepted By", text="Accepted By", anchor=CENTER)
+        
+        # Configure Treeview style
+        style = ttk.Style()
+        style.configure("Custom.Treeview", font=("Cooper Black", 12))
+        style.configure("Treeview.Row", padding=(0, 5))
+
+        # Set the background color for the headers
+        style.configure("Treeview.Heading", background="gray")
+
+        # Define a tag named "my_font" with the desired font
+        tree.tag_configure("my_font", font=("Cooper Black", 12))
+
+        # Set the column widths
+        tree.column("Donation ID", width=100)
+        
+        tree.column("Item Name", width=170)
+        tree.column("Item Type", width=135)
+        tree.column("Calories", width=135)
+        tree.column("Amount(Lbs)", width=135)
+        tree.column("Servings", width=135)
+        tree.column("Added By", width=135)
+        tree.column("Status", width=135)
+        tree.column("Accepted By", width=135)
+        
+        tree.pack()
+
+        # Connect to the SQLite3 database
+        conn = connect('fms.db')
+        cursor = conn.cursor()
+        
+       # Fetch and display data
+        cursor.execute("SELECT donation_id, item_name, item_type, calories, amount_lb, servings, manager_id, donation_status, user_id FROM donation_details WHERE manager_id = ? and donation_status = 'accepted'", (manager_id,))
+        donations = cursor.fetchall()
+        
+        for donation in donations:
+            
+            # Fetch the manager's user_name from the managers table
+            cursor.execute("SELECT user_name FROM managers WHERE manager_id=?", (donation[6],))
+            manager_result = cursor.fetchone()
+            manager_name = manager_result[0] if manager_result else None  # Assuming manager_id is at index 6
+
+            # Fetch the user's user_name from the users table
+            cursor.execute("SELECT user_name FROM users WHERE user_id=?", (donation[8],))
+            user_result = cursor.fetchone()
+            user_name = user_result[0] if user_result else None  # Assuming user_id is at index 8
+
+            tree.insert("", END, values=(donation[0], donation[1], donation[2], donation[3], donation[4], donation[5], manager_name, donation[7], user_name))
+
+        # Apply the "my_font" tag to all items in the treeview
+        for donation in tree.get_children():
+            tree.item(donation, tags=("my_font",))
+        # Buttons for CRUD operations
+
+        # add_button = Button(content_frame, text="ADD DONATION", command=add_donation, bg="#f39c12", fg="white", font=("Cooper Black", 12))
+        # add_button.pack(side=LEFT, padx=30, pady=10)
+
+        # edit_button = Button(content_frame, text="EDIT DONATION", command=edit_donation, bg="#3498db", fg="white", font=("Cooper Black", 12))
+        # edit_button.pack(side=LEFT, padx=320, pady=10)
+
+        # delete_button = Button(content_frame, text="DELETE DONATION", command=delete_donation, bg="#e74c3c", fg="white", font=("Cooper Black", 12))
+        # delete_button.pack(side=LEFT, padx=30, pady=10)
+
+        conn.close()
+        fms.scr.mainloop()
+
+#---------------------------------------------------Manager Dashboard Code End--------------------------------------------------------------------#    
+
+#---------------------------------------------------User Dashboard Code Start---------------------------------------------------------------------#    
+
+#---------------------------------------------------User Main Page--------------------------------------------------------------------------------#       
     def Userdetails(fms, user_id):
 
         fms.scr.destroy()
@@ -2508,7 +2662,7 @@ class Fms:
 
         fms.scr.mainloop()
 
-#--- User Donations Page -----
+#---------------------------------------------------User Pending Donations Page-------------------------------------------------------------------#
         
     def Userdonations(fms, user_id):
 
@@ -2757,8 +2911,8 @@ class Fms:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
 
         # Set the column widths
-        tree.column("Donation ID", width=150)
-        tree.column("Item Name", width=150)
+        tree.column("Donation ID", width=100)
+        tree.column("Item Name", width=200)
         tree.column("Item Type", width=150)
         tree.column("Calories", width=150)
         tree.column("Amount(Lbs)", width=150)
@@ -2798,7 +2952,7 @@ class Fms:
         conn.close()
         fms.scr.mainloop()
 
-#--- User Accepted Donations Page -----
+#---------------------------------------------------User Accepted Donations Page------------------------------------------------------------------#
         
     def User_accepted_donations(fms, user_id):
         fms.scr.destroy()
@@ -2884,7 +3038,7 @@ class Fms:
 
         # Set the column widths
         tree.column("Donation ID", width=100)
-        tree.column("Item Name", width=150)
+        tree.column("Item Name", width=200)
         tree.column("Item Type", width=150)
         tree.column("Calories", width=150)
         tree.column("Amount(Lbs)", width=150)
@@ -2924,9 +3078,9 @@ class Fms:
         conn.close()
         fms.scr.mainloop()
 
-#-------------------------------------------------------------- User Dashboard Code End ----------------------------------------------------------#    
+#---------------------------------------------------User Dashboard Code End-----------------------------------------------------------------------#    
 
-#-------------------------------------------------------------- Database Connections Code Start --------------------------------------------------#               
+#---------------------------------------------------Database Connections Code Start---------------------------------------------------------------#               
 
     def validate_email(fms, email):
         # Regular expression pattern for email validation
@@ -3062,6 +3216,7 @@ class Fms:
                 messagebox.showinfo("Success", "You have successfully logged in", icon="info")
                 fms.Managerdetails(manager_id)
 
-#-------------------------------------------------------------- Database Connections Code End ----------------------------------------------------#    
-x=Fms()
+#---------------------------------------------------Database Connections Code End-----------------------------------------------------------------#    
+                
+x = FoodManagementSystem()
 x.main()
