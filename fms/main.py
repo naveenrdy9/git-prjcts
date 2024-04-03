@@ -1054,8 +1054,8 @@ class FoodManagementSystem:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
         
         # Set the column widths
-        tree.column("Donation ID", width=135)
-        tree.column("Item Name", width=135)
+        tree.column("Donation ID", width=100)
+        tree.column("Item Name", width=170)
         tree.column("Item Type", width=135)
         tree.column("Calories", width=135)
         tree.column("Amount(Lbs)", width=135)
@@ -2151,9 +2151,9 @@ class FoodManagementSystem:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
 
         # Set the column widths
-        tree.column("Donation ID", width=135)
+        tree.column("Donation ID", width=100)
         
-        tree.column("Item Name", width=135)
+        tree.column("Item Name", width=170)
         tree.column("Item Type", width=135)
         tree.column("Calories", width=135)
         tree.column("Amount(Lbs)", width=135)
@@ -2292,9 +2292,9 @@ class FoodManagementSystem:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
 
         # Set the column widths
-        tree.column("Donation ID", width=135)
+        tree.column("Donation ID", width=100)
         
-        tree.column("Item Name", width=135)
+        tree.column("Item Name", width=170)
         tree.column("Item Type", width=135)
         tree.column("Calories", width=135)
         tree.column("Amount(Lbs)", width=135)
@@ -2911,8 +2911,8 @@ class FoodManagementSystem:
         tree.tag_configure("my_font", font=("Cooper Black", 12))
 
         # Set the column widths
-        tree.column("Donation ID", width=150)
-        tree.column("Item Name", width=150)
+        tree.column("Donation ID", width=100)
+        tree.column("Item Name", width=200)
         tree.column("Item Type", width=150)
         tree.column("Calories", width=150)
         tree.column("Amount(Lbs)", width=150)
@@ -3038,7 +3038,7 @@ class FoodManagementSystem:
 
         # Set the column widths
         tree.column("Donation ID", width=100)
-        tree.column("Item Name", width=150)
+        tree.column("Item Name", width=200)
         tree.column("Item Type", width=150)
         tree.column("Calories", width=150)
         tree.column("Amount(Lbs)", width=150)
