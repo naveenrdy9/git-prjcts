@@ -17,6 +17,8 @@ from hashlib import sha256
 # For Reports
 from fpdf import FPDF
 import pandas as pd
+#for the Font
+from tkinter.font import Font
 
 #---------------------------------------------------All Login Pages Code Start--------------------------------------------------------------------#    
 
@@ -96,20 +98,135 @@ class FoodManagementSystem:
         fms.pasd=Entry(fms.loginf2,bg="white",font=("cooper black",22),bd=5, show="*")
         fms.pasd.place(x=650,y=270)
 
-        fms.cl=Button(fms.loginf2,text="Clear",cursor="hand2",command=lambda:clear(fms),fg="white",bg="#0b1335",font=("cooper black",20),bd=4)
-        fms.cl.place(x=550,y=330)
+        fms.cl=Button(fms.loginf2,text="Clear",cursor="hand2",command=lambda:clear(fms),fg="white",bg="#0b1335",font=("cooper black",16),bd=4)
+        fms.cl.place(x=360,y=330)
         
-        fms.lg=Button(fms.loginf2,text="Login",cursor="hand2",fg="white",bg="#0b1335",command=fms.userdatabase,font=("cooper black",20),bd=4)
-        fms.lg.place(x=700,y=330)
+        fms.lg=Button(fms.loginf2,text="Login",cursor="hand2",fg="white",bg="#0b1335",command=fms.userdatabase,font=("cooper black",16),bd=4)
+        fms.lg.place(x=600,y=330)
+
+        forgot_password_button = Button(fms.loginf2, text="Forgot Password", cursor="hand2", fg="white", bg="#0b1335", command=fms.userforgot_password, font=("cooper black", 16, 'bold'), bd=5)
+        forgot_password_button.place(x=775, y=330)
         
-        fms.rg=Button(fms.loginf2,text="Click Here to Register",command=fms.Register,fg="white",cursor="hand2",bg="#8c68c1",font=("cooper black",20),bd=6)
-        fms.rg.place(x=505,y=400)
+        fms.rg=Button(fms.loginf2,text="Click Here to Register",command=fms.Register,fg="white",cursor="hand2",bg="#f39c12",font=("cooper black",16),bd=6)
+        fms.rg.place(x=525,y=400)
         
         def clear(fms):
             fms.user.delete(0,END)
             fms.pasd.delete(0,END)
                
         fms.scr.mainloop()
+
+    # Function to fetch manager data from the SQLite database
+    def fetch_user_data(fms):
+        try:
+            # Connect to the SQLite database
+            conn = connect('fms.db')  # Replace 'your_database.db' with your actual database file path
+            cursor = conn.cursor()
+
+            # Execute the query to fetch data from the 'managers' table
+            cursor.execute("SELECT user_name, email FROM users")
+
+            # Fetch all rows from the result set
+            rows = cursor.fetchall()
+
+            # Close the cursor and connection
+            cursor.close()
+            conn.close()
+
+            # Convert the fetched rows into a list of dictionaries
+            manager_data = [{'user_name': row[0], 'email': row[1]} for row in rows]
+
+            return manager_data
+
+        except Error as e:
+            print("Error fetching user data:", e)
+            return []
+
+    def userforgot_password(fms):
+        user_data = fms.fetch_user_data()
+        if not user_data:
+            messagebox.showerror("Error", "No user data found. Please check your database connection.")
+            return
+
+        forgot_password_window = Toplevel(fms.loginf2)
+        forgot_password_window.title("Update Password")
+        window_width = 600  # Width of the window
+        window_height = 275  # Height of the window
+        screen_width = forgot_password_window.winfo_screenwidth()
+        screen_height = forgot_password_window.winfo_screenheight()
+        x_coordinate = (screen_width / 2) - (window_width / 2)
+        y_coordinate = (screen_height / 2) - (window_height / 2)
+        forgot_password_window.geometry(f"{window_width}x{window_height}+{int(x_coordinate)}+{int(y_coordinate)}")
+
+        cooper_black_font = Font(family="Cooper Black", size=12)
+
+        def is_valid_email(email):
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            return re.match(email_regex, email)
+
+        def update_user_password():
+            new_username = new_username_entry.get()
+            new_email = new_email_entry.get()
+            new_password = new_password_entry.get()
+            confirm_password = confirm_password_entry.get()
+
+            if not new_username or not new_email or not new_password or not confirm_password:
+                messagebox.showerror("Error", "All fields are required.", parent=forgot_password_window)
+                return
+            
+            username_exists = any(user['user_name'] == new_username for user in user_data)
+            email_exists = any(user['email'] == new_email for user in user_data)
+
+            if not is_valid_email(new_email):
+                messagebox.showerror("Error", "Invalid email format.", parent=forgot_password_window)
+                return
+            if not username_exists or not email_exists:
+                messagebox.showerror("Error", "Username or email does not exist.", parent=forgot_password_window)
+                return
+            if not new_password or not confirm_password:
+                messagebox.showerror("Error", "Please enter new password and confirm password.", parent=forgot_password_window)
+                return
+            if new_password != confirm_password:
+                messagebox.showerror("Error", "Passwords do not match.", parent=forgot_password_window)
+                return
+
+            try:
+                conn = connect('fms.db')
+                cursor = conn.cursor()
+                cursor.execute("UPDATE users SET password = ? WHERE user_name = ? AND email = ?", (new_password, new_username, new_email))
+                conn.commit()
+                cursor.close()
+                conn.close()
+                messagebox.showinfo("Success", "Your password has been updated.", parent=forgot_password_window)
+                forgot_password_window.destroy()  # Close window only when update is successful
+            except Error as e:
+                messagebox.showerror("Error", "Error updating password: " + str(e), parent=forgot_password_window)
+
+        label_entry_frame = Frame(forgot_password_window)
+        label_entry_frame.pack(pady=10)
+
+        new_username_label = Label(label_entry_frame, text="User Name:", font=cooper_black_font)
+        new_username_label.grid(row=0, column=0, padx=(10, 5), pady=10, sticky="e")
+        new_username_entry = Entry(label_entry_frame, font=cooper_black_font)
+        new_username_entry.grid(row=0, column=1, padx=(0, 10), pady=10, sticky="w")
+
+        new_email_label = Label(label_entry_frame, text="Email:", font=cooper_black_font)
+        new_email_label.grid(row=1, column=0, padx=(10, 5), pady=10, sticky="e")
+        new_email_entry = Entry(label_entry_frame, font=cooper_black_font)
+        new_email_entry.grid(row=1, column=1, padx=(0, 10), pady=10, sticky="w")
+
+        new_password_label = Label(label_entry_frame, text="New Password:", font=cooper_black_font)
+        new_password_label.grid(row=2, column=0, padx=(10, 5), pady=10, sticky="e")
+        new_password_entry = Entry(label_entry_frame, show="*", font=cooper_black_font)
+        new_password_entry.grid(row=2, column=1, padx=(0, 10), pady=10, sticky="w")
+
+        confirm_password_label = Label(label_entry_frame, text="Confirm Password:", font=cooper_black_font)
+        confirm_password_label.grid(row=3, column=0, padx=(10, 5), pady=10, sticky="e")
+        confirm_password_entry = Entry(label_entry_frame, show="*", font=cooper_black_font)
+        confirm_password_entry.grid(row=3, column=1, padx=(0, 10), pady=10, sticky="w")
+
+        update_password_button = Button(forgot_password_window, text="Update Password", fg="white", cursor="hand2", bg="#0b1335", command=update_user_password, bd=5, font=("cooper black", 16, 'bold'))
+        update_password_button.pack(pady=10)
          
 #---------------------------------------------------Admin Login Page------------------------------------------------------------------------------#
         
@@ -130,6 +247,7 @@ class FoodManagementSystem:
         fms.scr.title("FOOD MANAGEMENT SYSTEM")
  
         fms.adminf1=Frame(fms.scr, bg="#ffffff")
+        fms.adminf1.pack(fill=BOTH,expand=YES)
 
         fms.logo = PhotoImage(file="logo.png")
         fms.logo_img = fms.logo.subsample(2,2)
@@ -148,11 +266,12 @@ class FoodManagementSystem:
         fms.tim=Label(fms.adminf1,text=fms.localtime,fg="white",font=("cooper black",14),bg="#0b1335")
         fms.tim.place(x=1000,y=50)
 
-        fms.adminf1.pack(fill=BOTH,expand=YES)
-
         fms.adminf2=Frame(fms.scr,height=1080,width=1920)
+        fms.adminf2.pack(fill=BOTH,expand= YES)
+   
         fms.c=Canvas(fms.adminf2,height=1080,width=1920)
         fms.c.pack()
+
         fms.fmain=PhotoImage(file="main.png")
         fms.c.create_image(650,309,image=fms.fmain)
         fms.c.create_rectangle(350,100,1020,425,fill="#d3ede6",outline="white",width=6)
@@ -166,22 +285,24 @@ class FoodManagementSystem:
         fms.lab2.place(x=360,y=270)
         fms.pasda=Entry(fms.adminf2,bg="white",font=("cooper black",22),bd=5, show="*")
         fms.pasda.place(x=650,y=270)
-        fms.lg=Button(fms.adminf2,text="Login",cursor="hand2",fg="white",bg="#0b1335",command=fms.admindatabase,font=("cooper black",20,'bold'),bd=5)
-        fms.lg.place(x=650,y=350)
-        fms.cl=Button(fms.adminf2,text="Back",cursor="hand2",fg="white",bg="#0b1335",command=fms.main,font=("cooper black",20,'bold'),bd=5)
+
+        fms.cl=Button(fms.adminf2,text="Back",cursor="hand2",fg="white",bg="#0b1335",command=fms.main,font=("cooper black",16,'bold'),bd=5)
         fms.cl.place(x=360,y=350)
+        
+        fms.lg=Button(fms.adminf2,text="Login",cursor="hand2",fg="white",bg="#0b1335",command=fms.admindatabase,font=("cooper black",16,'bold'),bd=5)
+        fms.lg.place(x=650,y=350)
+        
+        fms.rg=Button(fms.adminf2,text="Clear",fg="white",cursor="hand2",bg="#0b1335",command=lambda:clear(fms),bd=5,font=("cooper black",16,'bold'))
+        fms.rg.place(x=900,y=350)
+        
         def clear(fms):
             fms.usera.delete(0,END)
             fms.pasda.delete(0,END)
-        fms.rg=Button(fms.adminf2,text="Clear",fg="white",cursor="hand2",bg="#0b1335",command=lambda:clear(fms),bd=5,font=("cooper black",20,'bold'))
-        fms.rg.place(x=900,y=350)
-        
-        fms.adminf2.pack(fill=BOTH,expand= YES)
-   
+
         fms.scr.mainloop()
 
 #---------------------------------------------------Manager Login Page----------------------------------------------------------------------------#
-
+    
     def Managerlogin(fms):
 
         fms.scr.destroy()
@@ -197,6 +318,7 @@ class FoodManagementSystem:
         fms.scr.title("FOOD MANAGEMENT SYSTEM")
  
         fms.managerf1=Frame(fms.scr, bg="#ffffff")
+        fms.managerf1.pack(fill=BOTH,expand=YES)
 
         fms.logo = PhotoImage(file="logo.png")
         fms.logo_img = fms.logo.subsample(2,2)
@@ -214,15 +336,15 @@ class FoodManagementSystem:
         fms.localtime=time.asctime(time.localtime(time.time()))
         fms.tim=Label(fms.managerf1,text=fms.localtime,fg="white",font=("cooper black",14),bg="#0b1335")
         fms.tim.place(x=1000,y=50)
-        fms.managerf1.pack(fill=BOTH,expand=YES)
-
-
+        
         fms.managerf2=Frame(fms.scr,height=1080,width=1920)
+        fms.managerf2.pack(fill=BOTH,expand= YES)
         fms.c=Canvas(fms.managerf2,height=1080,width=1920)
         fms.c.pack()
         fms.fmain=PhotoImage(file="main.png")
         fms.c.create_image(650,309,image=fms.fmain) 
         fms.c.create_rectangle(350,100,1020,425,fill="#d3ede6",outline="white",width=6)
+
         fms.log=Label(fms.managerf2,text="MANAGER LOGIN",fg="white",bg="#0b1335",width=27,font=("cooper black",27))
         fms.log.place(x=357,y=110)
         fms.lab1=Label(fms.managerf2,text="User Name",bg="#d3ede6",font=("cooper black",22))
@@ -233,19 +355,140 @@ class FoodManagementSystem:
         fms.lab2.place(x=360,y=270)
         fms.pasda=Entry(fms.managerf2,bg="white",font=("cooper black",22),bd=5, show="*")
         fms.pasda.place(x=650,y=270)
-        fms.lg=Button(fms.managerf2,text="Login",cursor="hand2",fg="white",bg="#0b1335",command=fms.managerdatabase,font=("cooper black",20,'bold'),bd=5)
-        fms.lg.place(x=650,y=350)
-        fms.cl=Button(fms.managerf2,text="Back",cursor="hand2",fg="white",bg="#0b1335",command=fms.main,font=("cooper black",20,'bold'),bd=5)
-        fms.cl.place(x=360,y=350)
+        
+        fms.cl = Button(fms.managerf2, text="Back", cursor="hand2", fg="white", bg="#0b1335", command=fms.main, font=("cooper black", 16, 'bold'), bd=5)
+        fms.cl.place(x=360, y=350)
+
+        forgot_password_button = Button(fms.managerf2, text="Forgot Password", cursor="hand2", fg="white", bg="#0b1335", command=fms.forgot_password, font=("cooper black", 16, 'bold'), bd=5)
+        forgot_password_button.place(x=465, y=350)        
+
+        fms.lg = Button(fms.managerf2, text="Login", cursor="hand2", fg="white", bg="#0b1335", command=fms.managerdatabase, font=("cooper black", 16, 'bold'), bd=5)
+        fms.lg.place(x=710, y=350)
+
+        fms.rg = Button(fms.managerf2, text="Clear", fg="white", cursor="hand2", bg="#0b1335", command=lambda: clear(fms), bd=5, font=("cooper black", 16, 'bold'))
+        fms.rg.place(x=910, y=350)
+        
         def clear(fms):
             fms.usera.delete(0,END)
             fms.pasda.delete(0,END)
-        fms.rg=Button(fms.managerf2,text="Clear",fg="white",cursor="hand2",bg="#0b1335",command=lambda:clear(fms),bd=5,font=("cooper black",20,'bold'))
-        fms.rg.place(x=900,y=350)
         
-        fms.managerf2.pack(fill=BOTH,expand= YES)
-   
         fms.scr.mainloop()
+
+    # Function to fetch manager data from the SQLite database
+    def fetch_manager_data(fms):
+        try:
+            # Connect to the SQLite database
+            conn = connect('fms.db')  # Replace 'your_database.db' with your actual database file path
+            cursor = conn.cursor()
+
+            # Execute the query to fetch data from the 'managers' table
+            cursor.execute("SELECT user_name, email FROM managers")
+
+            # Fetch all rows from the result set
+            rows = cursor.fetchall()
+
+            # Close the cursor and connection
+            cursor.close()
+            conn.close()
+
+            # Convert the fetched rows into a list of dictionaries
+            manager_data = [{'user_name': row[0], 'email': row[1]} for row in rows]
+
+            return manager_data
+
+        except Error as e:
+            print("Error fetching manager data:", e)
+            return []
+
+    def forgot_password(fms):
+        manager_data = fms.fetch_manager_data()
+        if not manager_data:
+            messagebox.showerror("Error", "No manager data found. Please check your database connection.")
+            return
+
+        forgot_password_window = Toplevel(fms.managerf2)
+        forgot_password_window.title("Update Password")
+        window_width = 600  # Width of the window
+        window_height = 275  # Height of the window
+        screen_width = forgot_password_window.winfo_screenwidth()
+        screen_height = forgot_password_window.winfo_screenheight()
+        x_coordinate = (screen_width / 2) - (window_width / 2)
+        y_coordinate = (screen_height / 2) - (window_height / 2)
+        forgot_password_window.geometry(f"{window_width}x{window_height}+{int(x_coordinate)}+{int(y_coordinate)}")
+
+        cooper_black_font = Font(family="Cooper Black", size=12)
+
+        def is_valid_email(email):
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            return re.match(email_regex, email)
+
+        def update_password():
+            new_username = new_username_entry.get()
+            new_email = new_email_entry.get()
+            new_password = new_password_entry.get()
+            confirm_password = confirm_password_entry.get()
+
+            # Check if any of the fields are empty
+            if not new_username or not new_email or not new_password or not confirm_password:
+                messagebox.showerror("Error", "All fields are required.", parent=forgot_password_window)
+                return
+
+            username_exists = any(manager['user_name'] == new_username for manager in manager_data)
+            email_exists = any(manager['email'] == new_email for manager in manager_data)
+
+            if not is_valid_email(new_email):
+                messagebox.showerror("Error", "Invalid email format.", parent=forgot_password_window)
+                return
+            if not username_exists or not email_exists:
+                messagebox.showerror("Error", "Username or email does not exist.", parent=forgot_password_window)
+                return
+            if not new_password or not confirm_password:
+                messagebox.showerror("Error", "Please enter new password and confirm password.", parent=forgot_password_window)
+                return
+            if new_password != confirm_password:
+                messagebox.showerror("Error", "Passwords do not match.", parent=forgot_password_window)
+                return
+
+            try:
+                conn = connect('fms.db')
+                cursor = conn.cursor()
+                cursor.execute("UPDATE managers SET password = ? WHERE user_name = ? AND email = ?", (new_password, new_username, new_email))
+                conn.commit()
+                cursor.close()
+                conn.close()
+                messagebox.showinfo("Success", "Your password has been updated.", parent=forgot_password_window)
+                forgot_password_window.destroy()  # Close window only when update is successful
+            except Error as e:
+                messagebox.showerror("Error", "Error updating password: " + str(e), parent=forgot_password_window)
+
+        label_entry_frame = Frame(forgot_password_window)
+        label_entry_frame.pack(pady=10)
+
+        new_username_label = Label(label_entry_frame, text="User Name:", font=cooper_black_font)
+        new_username_label.grid(row=0, column=0, padx=(10, 5), pady=10, sticky="e")
+        new_username_entry = Entry(label_entry_frame, font=cooper_black_font)
+        new_username_entry.grid(row=0, column=1, padx=(0, 10), pady=10, sticky="w")
+
+        new_email_label = Label(label_entry_frame, text="Email:", font=cooper_black_font)
+        new_email_label.grid(row=1, column=0, padx=(10, 5), pady=10, sticky="e")
+        new_email_entry = Entry(label_entry_frame, font=cooper_black_font)
+        new_email_entry.grid(row=1, column=1, padx=(0, 10), pady=10, sticky="w")
+
+        new_password_label = Label(label_entry_frame, text="New Password:", font=cooper_black_font)
+        new_password_label.grid(row=2, column=0, padx=(10, 5), pady=10, sticky="e")
+        new_password_entry = Entry(label_entry_frame, show="*", font=cooper_black_font)
+        new_password_entry.grid(row=2, column=1, padx=(0, 10), pady=10, sticky="w")
+
+        confirm_password_label = Label(label_entry_frame, text="Confirm Password:", font=cooper_black_font)
+        confirm_password_label.grid(row=3, column=0, padx=(10, 5), pady=10, sticky="e")
+        confirm_password_entry = Entry(label_entry_frame, show="*", font=cooper_black_font)
+        confirm_password_entry.grid(row=3, column=1, padx=(0, 10), pady=10, sticky="w")
+
+        update_password_button = Button(forgot_password_window, text="Update Password", fg="white", cursor="hand2", bg="#0b1335", command=update_password, bd=5, font=("cooper black", 16, 'bold'))
+        update_password_button.pack(pady=10)
+        
+        # update_button = Button(forgot_password_window, text="Update Password", command=update_password, font=cooper_black_font, bg="#0b1335", fg="#fff", padx=10, pady=5)
+        # update_button.pack(pady=10)
 
 #---------------------------------------------------All Login Pages Code End----------------------------------------------------------------------#    
 
